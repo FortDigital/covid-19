@@ -68,5 +68,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
+* Cameron McCloskey for some pointers on Color scheme/layout
 * JHU For gathering the data (https://github.com/CSSEGISandData/COVID-19)
 * ExpDev07 for creating the API which was used to origionally access the data (https://github.com/ExpDev07/coronavirus-tracker-api)
