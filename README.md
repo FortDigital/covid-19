@@ -8,8 +8,8 @@ DISCLAIMER: I will hold my hands up now and say im NOT a developer, this is my f
 
 ### Screenshots
 
-![Alt text](/screenshots/top.jpg?raw=true)
-![Alt text](/screenshots/bottom.jpg?raw=true)
+![Alt text](/screenshots/top.png?raw=true)
+![Alt text](/screenshots/bottom.png?raw=true)
 
 ### Prerequisites
 
