@@ -6,8 +6,8 @@ Grafana Visualisation and Python Data collection script for tracking covid-19 ac
 
 ### Screenshots
 
-![Alt text](/Screenshots/Top.png?raw=true)
-![Alt text](/Screenshots/Bottom.png?raw=true)
+![Alt text](/Screenshots/Full.png?raw=true)
+
 
 ### Prerequisites
 
