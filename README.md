@@ -7,9 +7,11 @@ Grafana Visualisation and Python Data collection script for tracking covid-19 ac
 
 ### Prerequisites
 
+```
 Grafana
 Influxdb
 Python 3.x
+```
 
 ### Installing
 
