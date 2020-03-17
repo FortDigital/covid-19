@@ -37,16 +37,22 @@ INFLUX_USER = '' #Leave blank if you are not using Auth
 INFUX_PASS = '' #Leave blank if you are not using Auth
 ```
 
+The Script can be run from a scheduled task, the target repository is updated every evening:
+
+```
+https://github.com/CSSEGISandData/COVID-19
+```
+
 Grafana Plugins Required:
 
 ```
 https://grafana.com/grafana/plugins/grafana-worldmap-panel
 ```
 
-The Script can be run from a scheduled task, the target repository is updated every evening:
+Import Grafana.json into Grafana:
 
 ```
-https://github.com/CSSEGISandData/COVID-19
+https://grafana.com/docs/grafana/latest/reference/export_import/#importing-a-dashboard
 ```
 
 ## Authors
