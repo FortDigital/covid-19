@@ -6,6 +6,11 @@ Grafana Visualisation and Python Data collection script for tracking covid-19 ac
 
 DISCLAIMER: I will hold my hands up now and say im NOT a developer, this is my first foray into developing and releasing ANYTHING into the community so please be gentle with me :) That being said if you do have any pointers/improvements please feel free to share your views, Just dont be offended if i dont neccesarily act on them in this project!
 
+### Screenshots
+
+![Alt text](/screenshots/top.jpg?raw=true)
+![Alt text](/screenshots/bottom.jpg?raw=true)
+
 ### Prerequisites
 
 ```
