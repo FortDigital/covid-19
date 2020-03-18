@@ -1,3 +1,11 @@
+# Forked from FortDigital/covid-19
+
+Added support for running FortDigital's script via Docker. The script runs every 30 minutes atm though source data is updated once a day. This can be easily changed in `run.py` in `/Docker`!
+
+Image can be pulled from Docker Hub: `alexandzors/covid19:latest`
+
+Composefile can be found in `/Docker`.
+
 # Covid-19
 
 Grafana Visualisation and Python Data collection script for tracking covid-19 activity.
