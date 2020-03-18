@@ -13,7 +13,7 @@ RUN pip install wheel
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 COPY --from=builder /app/covid-19/covid19.py /usr/src/app
-COPY --from=builder /app/docker-cron /etc/cron.d/docker-cron
+COPY --from=builder /app/covid-19/docker-cron /etc/cron.d/docker-cron
 RUN chmod 0644 /etc/cron.d/docker-cron
 RUN crontab /etc/cron.d/docker-cron
 RUN touch /var/log/cron.log
