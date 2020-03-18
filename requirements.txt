@@ -1,0 +1,8 @@
+#-----------
+# covid19.py pip requirements
+# pip install -r requirements.txt
+# ----------
+requests
+geohash
+datetime 
+influxdb 
