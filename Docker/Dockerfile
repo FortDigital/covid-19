@@ -13,5 +13,5 @@ RUN pip install wheel
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 COPY --from=builder /app/covid-19/covid19.py /usr/src/app
-
-CMD [ "python", "./covid19.py"]
+COPY --from=builder /app/covid-19/Docker/run.py /usr/src/app
+CMD [ "python", "./run.py"]
