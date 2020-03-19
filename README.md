@@ -19,15 +19,12 @@ Python 3.x
 
 ### Installing
 
-To run the Python Script you will need the following modules:
+To run the Python Script you will need to install the following modules:
 
 ```
-csv
-requests
-itertools
-geohash
-datetime 
-influxdb 
+pip install requests
+pip install python-geohash
+pip install influxdb
 ```
 
 The following Variables can be set in the script to fit your Influxdb enviroment:
@@ -55,7 +52,7 @@ https://grafana.com/grafana/plugins/grafana-worldmap-panel
 Import Grafana.json into Grafana:
 
 ```
-https://grafana.com/docs/grafana/latest/reference/export_import/#importing-a-dashboard
+https://grafana.com/grafana/dashboards/11949
 ```
 
 ## Authors
