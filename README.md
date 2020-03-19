@@ -1,11 +1,3 @@
-# Forked from FortDigital/covid-19
-
-Added support for running FortDigital's script via Docker. The script runs every 30 minutes atm though source data is updated once a day. This can be easily changed in `run.py` in `/Docker`!
-
-Image can be pulled from Docker Hub: `alexandzors/covid19:latest`
-
-Composefile can be found in `/Docker`.
-
 # Covid-19
 
 Grafana Visualisation and Python Data collection script for tracking covid-19 activity.
@@ -38,14 +30,16 @@ datetime
 influxdb 
 ```
 
-The following Variables can be set in the script to fit your Influxdb enviroment:
+The following Variables can be set in the script to fit your Influxdb enviroment. Only edit the second half of the variable.
+
+Example: os.getenv('DBHOST', 'CHANGE THIS ONE ONLY')
 
 ```
-INFLUX_HOST = 'localhost'
-INFLUX_DB = 'covid19' #Database must exist for Script to run
-INFLUX_DBPORT =  8086
-INFLUX_USER = '' #Leave blank if you are not using Auth
-INFUX_PASS = '' #Leave blank if you are not using Auth
+INFLUX_HOST = os.getenv('DBHOST', 'localhost') #InfluxDB Host
+INFLUX_DB = os.getenv('DB', 'covid19') #InfluxDB DB
+INFLUX_DBPORT =  os.getenv('DBPORT', 8086) #InfluxDB Port
+INFLUX_USER = os.getenv('DBUSER', '') #InfluxDB User. Leave blank if you do not use auth.
+INFUX_PASS = os.getenv('DBPASS', '') #InfluxDB Password. Leave blank if you do not use auth.
 ```
 
 The Script can be run from a scheduled task, the target repository is updated every evening:
@@ -65,6 +59,17 @@ Import Grafana.json into Grafana:
 ```
 https://grafana.com/docs/grafana/latest/reference/export_import/#importing-a-dashboard
 ```
+# Docker
+
+Image is located @ hub.docker.com/alexandzors/covid19
+
+It can be run with the following paramters:
+
+```
+docker run -d --name=covid19 -e "DBHOST=localhost" -e "DB=covid19" -e "DBPORT=8086" -e "DBUSER=user" -e "DBPASS=password"`
+```
+
+A compose file is provided in `/Docker`.
 
 ## Authors
 
