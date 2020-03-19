@@ -30,6 +30,12 @@ datetime
 influxdb 
 ```
 
+Or
+
+```
+pip install -r requirements.txt
+```
+
 The following Variables can be set in the script to fit your Influxdb enviroment. Only edit the second half of the variable.
 
 Example: os.getenv('DBHOST', 'CHANGE THIS ONE ONLY')
