@@ -9,6 +9,7 @@ import csv
 import requests
 import itertools
 import geohash
+import os
 from datetime import datetime, tzinfo, timedelta
 from influxdb import InfluxDBClient
 class Zone(tzinfo):
@@ -25,11 +26,11 @@ class Zone(tzinfo):
 
     def tzname(self, dt):
         return self.name
-INFLUX_HOST = 'localhost'
-INFLUX_DB = 'covid19'
-INFLUX_DBPORT =  8086
-INFLUX_USER = ''
-INFUX_PASS = ''
+INFLUX_HOST = os.getenv('DBHOST', 'localhost')
+INFLUX_DB = os.getenv('DB', 'covid19')
+INFLUX_DBPORT =  os.getenv('DBPORT', 8086)
+INFLUX_USER = os.getenv('DBUSER', '')
+INFUX_PASS = os.getenv('DBPASS', '')
 client = InfluxDBClient(INFLUX_HOST, INFLUX_DBPORT,INFLUX_USER,INFUX_PASS, INFLUX_DB)
 GMT = Zone(0, False, 'GMT')
 #Direct Links to the 3 CSV Files maintained by JHU CCSE

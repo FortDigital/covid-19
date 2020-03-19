@@ -1,0 +1,21 @@
+version: '3.6'
+services:
+  covid19-exporter:
+    deploy:
+      restart_policy:
+        condition: always
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500k"
+        max-file: "1"
+    image: alexandzors/covid19:latest
+    environment:
+      - "DBHOST=localhost"
+      - "DB=covid19"
+      - "DBPORT=8086"
+      - "DBUSER="
+      - "DBPASS="
