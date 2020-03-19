@@ -67,7 +67,7 @@ https://grafana.com/docs/grafana/latest/reference/export_import/#importing-a-das
 ```
 # Docker
 
-Image is located @ hub.docker.com/alexandzors/covid19
+Image is located @ https://hub.docker.com/alexandzors/covid19
 
 It can be run with the following paramters:
 
@@ -76,6 +76,10 @@ docker run -d --name=covid19 -e "DBHOST=localhost" -e "DB=covid19" -e "DBPORT=80
 ```
 
 A compose file is provided in `/Docker`.
+
+The script runs every 4 hours via a cron job in the container. Cron settings can be changed via `/Docker/run.py` and then built locally using the Dockerfile in `/Docker/`.
+
+**Note**: You will need to change the first build stage if you plan on building locally.
 
 ## Authors
 
