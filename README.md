@@ -2,6 +2,8 @@
 
 Grafana Visualisation and Python Data collection script for tracking covid-19 activity.
 
+Also being hosted here: http://fdcnt001.uksouth.cloudapp.azure.com:8080/d/H7a-pFmRz/covid-19?kiosk
+
 ## Getting Started
 
 ### Screenshots
