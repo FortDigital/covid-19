@@ -1,8 +1,8 @@
 {
   "__inputs": [
     {
-      "name": "DS_INFLUXDB_- COVID19",
-      "label": "InfluxDB - covid19",
+      "name": "DS_INFLUXDB_COVID19",
+      "label": "InfluxDB covid19",
       "description": "",
       "type": "datasource",
       "pluginId": "influxdb",
@@ -14,7 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "6.6.2"
+      "version": "6.7.0"
     },
     {
       "type": "panel",
@@ -60,16 +60,17 @@
       }
     ]
   },
+  "description": "Visualisation of Data from John Hopkins University of the Covid-19 Outbreak",
   "editable": true,
-  "gnetId": null,
+  "gnetId": 11949,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1584483674529,
+  "iteration": 1584701979832,
   "links": [],
   "panels": [
     {
-      "content": "<a href=\"http://www.fort-digital.com\" target=\"_blank\"><img src=\"https://www.fort-digital.com/wp-content/uploads/2020/03/FD-FINAL-Dark-BG.png\" height=\"100%\"></a>Data From John Hopkins University: <a href=\"https://github.com/CSSEGISandData/COVID-19\" target=\"_blank\">https://github.com/CSSEGISandData/COVID-19</a>\nNB: Data is reliant on formal testing taking place so is not 100% accurate, This also affects Mortality rate Calculation",
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "content": "<a href=\"http://www.fort-digital.com\" target=\"_blank\"><img src=\"https://www.fort-digital.com/wp-content/uploads/2020/03/FD-FINAL-Dark-BG.png\" height=\"100%\"></a> Check out our github for more information and to raise issues: <a href=\"https://github.com/FortDigital/covid-19\">https://github.com/FortDigital/covid-19</a> NB: Mortality Rate is inflated due to Limited Testing",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "gridPos": {
         "h": 2,
         "w": 21,
@@ -78,7 +79,6 @@
       },
       "id": 56,
       "mode": "html",
-      "options": {},
       "timeFrom": null,
       "timeShift": null,
       "title": "",
@@ -86,7 +86,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "gridPos": {
         "h": 2,
         "w": 3,
@@ -131,7 +131,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.0",
       "targets": [
         {
           "groupBy": [
@@ -189,7 +189,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -361,7 +361,7 @@
       }
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "description": "These are running total's rather than calculating active cases etc.",
       "gridPos": {
         "h": 4,
@@ -399,7 +399,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.0",
       "repeat": null,
       "repeatDirection": "h",
       "targets": [
@@ -459,7 +459,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "description": "Doesnt filter as Population of world hard coded\n\nFuture Improvement to Store Country Populations",
       "gridPos": {
         "h": 4,
@@ -496,7 +496,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.0",
       "targets": [
         {
           "alias": "$col",
@@ -543,7 +543,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "description": "These are running total's rather than calculating active cases etc.",
       "gridPos": {
         "h": 4,
@@ -581,7 +581,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.0",
       "repeatDirection": "h",
       "targets": [
         {
@@ -640,7 +640,8 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
+      "description": "Mortality rate is based on REPORTED cases only and therefore is considerably higher than reality",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -676,7 +677,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.0",
       "targets": [
         {
           "alias": "$col",
@@ -723,7 +724,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "description": "These are running total's rather than calculating active cases etc.",
       "gridPos": {
         "h": 4,
@@ -761,7 +762,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.0",
       "repeatDirection": "h",
       "targets": [
         {
@@ -820,7 +821,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -856,7 +857,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.6.2",
+      "pluginVersion": "6.7.0",
       "targets": [
         {
           "alias": "$col",
@@ -910,7 +911,7 @@
         "#FF9830",
         "#FA6400"
       ],
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "decimals": 0,
       "esGeoPoint": "geohash",
       "esLocationName": "location",
@@ -933,7 +934,6 @@
       "maxDataPoints": 1,
       "maxPerRow": 3,
       "mouseWheelZoom": false,
-      "options": {},
       "repeat": null,
       "repeatDirection": "h",
       "showLegend": true,
@@ -1025,7 +1025,7 @@
         "#F2495C",
         "#C4162A"
       ],
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "decimals": 0,
       "esGeoPoint": "geohash",
       "esLocationName": "location",
@@ -1048,7 +1048,6 @@
       "maxDataPoints": 1,
       "maxPerRow": 3,
       "mouseWheelZoom": false,
-      "options": {},
       "repeatDirection": "h",
       "showLegend": true,
       "stickyLabels": false,
@@ -1139,7 +1138,7 @@
         "#73BF69",
         "#37872D"
       ],
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "decimals": 0,
       "esGeoPoint": "geohash",
       "esLocationName": "location",
@@ -1162,7 +1161,6 @@
       "maxDataPoints": 1,
       "maxPerRow": 3,
       "mouseWheelZoom": false,
-      "options": {},
       "repeatDirection": "h",
       "showLegend": true,
       "stickyLabels": false,
@@ -1250,7 +1248,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1389,7 +1387,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19}",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1541,15 +1539,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_INFLUXDB_- COVID19}",
-        "definition": "SHOW FIELD KEYS ON covid19 FROM covid19",
+        "datasource": "${DS_INFLUXDB_COVID19}",
+        "definition": "SHOW FIELD KEYS",
         "hide": 2,
         "includeAll": true,
+        "index": -1,
         "label": null,
         "multi": false,
         "name": "Fields",
         "options": [],
-        "query": "SHOW FIELD KEYS ON covid19 FROM covid19",
+        "query": "SHOW FIELD KEYS",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1563,15 +1562,16 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_INFLUXDB_- COVID19}",
-        "definition": "SHOW TAG VALUES on covid19 from covid19 with KEY=country",
+        "datasource": "${DS_INFLUXDB_COVID19}",
+        "definition": "SHOW TAG VALUES with KEY=country",
         "hide": 0,
         "includeAll": true,
+        "index": -1,
         "label": null,
         "multi": true,
         "name": "Country",
         "options": [],
-        "query": "SHOW TAG VALUES on covid19 from covid19 with KEY=country",
+        "query": "SHOW TAG VALUES with KEY=country",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1605,5 +1605,8 @@
   "timezone": "",
   "title": "Covid-19",
   "uid": "H7a-pFmRz",
-  "version": 112
+  "variables": {
+    "list": []
+  },
+  "version": 13
 }
