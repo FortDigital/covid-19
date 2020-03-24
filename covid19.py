@@ -33,7 +33,7 @@ INFUX_PASS = ''
 client = InfluxDBClient(INFLUX_HOST, INFLUX_DBPORT,INFLUX_USER,INFUX_PASS, INFLUX_DB)
 GMT = Zone(0, False, 'GMT')
 #Direct Links to the 3 CSV Files maintained by JHU CCSE
-inputfiles = {"confirmed":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv","deaths":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv","recovered":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv"}
+inputfiles = {"confirmed":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv","deaths":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"} #,"recovered":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv"}
 measurements = []
 measurements_hash = {}
 #Iterate through each Source File and build hash table
@@ -61,7 +61,10 @@ for i in sorted(inputfiles.keys()):
                     measurements_hash[time_loc_hash]['tags']['country'] = country
                     measurements_hash[time_loc_hash]['tags']['province'] = province.strip()
                     measurements_hash[time_loc_hash]['tags']['geohash'] = geohash.encode(float(record['Lat']),float(record['Long'])) # Generate Geohash for use with Grafana Plugin
-                measurements_hash[time_loc_hash]['fields'][field] = int(record[k]) 
+                try:
+                    measurements_hash[time_loc_hash]['fields'][field] = int(record[k]) 
+                except ValueError:
+                    measurements_hash[time_loc_hash]['fields'][field] = 0    
 #Iterate through Hash table and format for Influxdb Client
 for m in measurements_hash:
     measurements.append(measurements_hash[m])   
