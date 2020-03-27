@@ -1,8 +1,8 @@
 #Ingest Data from JHU CCSE Covid19 Repository https://github.com/CSSEGISandData/COVID-19
 #Confirmed
-#https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv
+#https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv
 #Deaths
-#https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv
+#https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv
 #Recovered
 #https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv
 import csv
@@ -30,10 +30,11 @@ INFLUX_DB = 'covid19'
 INFLUX_DBPORT =  8086
 INFLUX_USER = ''
 INFUX_PASS = ''
+INFLUX_DROPMEASUREMENT = True
 client = InfluxDBClient(INFLUX_HOST, INFLUX_DBPORT,INFLUX_USER,INFUX_PASS, INFLUX_DB)
 GMT = Zone(0, False, 'GMT')
 #Direct Links to the 3 CSV Files maintained by JHU CCSE
-inputfiles = {"confirmed":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv","deaths":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"} #,"recovered":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv"}
+inputfiles = {"confirmed":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv","deaths":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv","recovered":"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"}
 measurements = []
 measurements_hash = {}
 #Iterate through each Source File and build hash table
@@ -65,6 +66,9 @@ for i in sorted(inputfiles.keys()):
                     measurements_hash[time_loc_hash]['fields'][field] = int(record[k]) 
                 except ValueError:
                     measurements_hash[time_loc_hash]['fields'][field] = 0    
+#Drop existing Measurement to ensure data consistency with Datasource being updated regularly
+if INFLUX_DROPMEASUREMENT:
+    client.drop_measurement('covid19')
 #Iterate through Hash table and format for Influxdb Client
 for m in measurements_hash:
     measurements.append(measurements_hash[m])   

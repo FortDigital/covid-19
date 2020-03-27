@@ -14,7 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "6.7.0"
+      "version": "6.7.1"
     },
     {
       "type": "panel",
@@ -65,11 +65,11 @@
   "gnetId": 11949,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1584701979832,
+  "iteration": 1585320464036,
   "links": [],
   "panels": [
     {
-      "content": "<a href=\"http://www.fort-digital.com\" target=\"_blank\"><img src=\"https://www.fort-digital.com/wp-content/uploads/2020/03/FD-FINAL-Dark-BG.png\" height=\"100%\"></a> Check out our github for more information and to raise issues: <a href=\"https://github.com/FortDigital/covid-19\">https://github.com/FortDigital/covid-19</a> NB: Mortality Rate is inflated due to Limited Testing",
+      "content": "<a href=\"http://www.fort-digital.com\" target=\"_blank\"><img src=\"https://www.fort-digital.com/wp-content/uploads/2020/03/FD-FINAL-Dark-BG.png\" height=\"100%\"></a> Check out our github for more information and to raise issues: <a href=\"https://github.com/FortDigital/covid-19\">https://github.com/FortDigital/covid-19</a> NB: Mortality Rate is inflated due to Limited Testing.",
       "datasource": "${DS_INFLUXDB_COVID19}",
       "gridPos": {
         "h": 2,
@@ -131,7 +131,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.7.0",
+      "pluginVersion": "6.7.1",
       "targets": [
         {
           "groupBy": [
@@ -399,7 +399,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.7.0",
+      "pluginVersion": "6.7.1",
       "repeat": null,
       "repeatDirection": "h",
       "targets": [
@@ -496,7 +496,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.7.0",
+      "pluginVersion": "6.7.1",
       "targets": [
         {
           "alias": "$col",
@@ -581,7 +581,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.7.0",
+      "pluginVersion": "6.7.1",
       "repeatDirection": "h",
       "targets": [
         {
@@ -677,7 +677,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.7.0",
+      "pluginVersion": "6.7.1",
       "targets": [
         {
           "alias": "$col",
@@ -697,7 +697,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT sum(\"deaths\")/(sum(\"recovered\")+sum(\"deaths\")) as \"Mortality Rate\" FROM \"covid19\".\"autogen\".\"covid19\" WHERE $timeFilter and \"country\"=~ /$Country/ GROUP BY time($__interval) fill(none)",
+          "query": "SELECT sum(\"deaths\")/(sum(\"confirmed\")) as \"Confirmed Cases resulting in Deaths\" FROM \"covid19\".\"autogen\".\"covid19\" WHERE $timeFilter and \"country\"=~ /$Country/ GROUP BY time($__interval) fill(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -732,7 +732,7 @@
         "x": 16,
         "y": 7
       },
-      "id": 71,
+      "id": 81,
       "interval": "1d",
       "maxPerRow": 3,
       "options": {
@@ -762,7 +762,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.7.0",
+      "pluginVersion": "6.7.1",
       "repeatDirection": "h",
       "targets": [
         {
@@ -822,13 +822,14 @@
     },
     {
       "datasource": "${DS_INFLUXDB_COVID19}",
+      "description": "Mortality rate is based on REPORTED cases only and therefore is considerably higher than reality",
       "gridPos": {
         "h": 4,
         "w": 4,
         "x": 20,
         "y": 7
       },
-      "id": 25,
+      "id": 82,
       "interval": "1d",
       "options": {
         "colorMode": "background",
@@ -857,7 +858,7 @@
         "justifyMode": "auto",
         "orientation": "auto"
       },
-      "pluginVersion": "6.7.0",
+      "pluginVersion": "6.7.1",
       "targets": [
         {
           "alias": "$col",
@@ -877,7 +878,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT sum(\"recovered\")/(sum(\"recovered\")+sum(\"deaths\")) as \"Recovery Rate\" FROM \"covid19\".\"autogen\".\"covid19\" WHERE $timeFilter and \"country\"=~ /$Country/ GROUP BY time($__interval) fill(none)",
+          "query": "SELECT 1-sum(\"deaths\")/(sum(\"confirmed\")) as \"Confirmed Cases resulting in Recovery\" FROM \"covid19\".\"autogen\".\"covid19\" WHERE $timeFilter and \"country\"=~ /$Country/ GROUP BY time($__interval) fill(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1151,7 +1152,7 @@
       },
       "hideEmpty": true,
       "hideZero": true,
-      "id": 76,
+      "id": 80,
       "initialZoom": "1",
       "interval": "1d",
       "locationData": "geohash",
@@ -1365,7 +1366,7 @@
           "label": null,
           "logBase": 1,
           "max": null,
-          "min": null,
+          "min": "0",
           "show": true
         },
         {
@@ -1471,10 +1472,6 @@
               },
               {
                 "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [],
                 "type": "non_negative_difference"
               }
             ]
@@ -1530,7 +1527,7 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "1h",
   "schemaVersion": 22,
   "style": "dark",
   "tags": [],
@@ -1608,5 +1605,5 @@
   "variables": {
     "list": []
   },
-  "version": 13
+  "version": 33
 }
