@@ -24,7 +24,7 @@ class Zone(tzinfo):
     def tzname(self, dt):
         return self.name
 INFLUX_HOST = 'localhost'
-INFLUX_DB = 'covid19'
+INFLUX_DB = 'covid19_NewDataset'
 INFLUX_DBPORT =  8086
 INFLUX_USER = ''
 INFUX_PASS = ''
