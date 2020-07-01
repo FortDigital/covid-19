@@ -59,11 +59,11 @@ else:
                 measurements_hash[time_loc_hash]['tags']['geohash'] = geohash.encode(float(record['lat']),float(record['long'])) # Generate Geohash for use with Grafana Plugin
             except:
                 measurements_hash[time_loc_hash]['tags']['geohash'] = geohash.encode(float(0),float(0)) # Generates a dummy Geohash to satisfy Grafana
-            for field in field_array:
-                try:
-                    measurements_hash[time_loc_hash]['fields'][field] = int(record[field])
-                except ValueError:
-                    measurements_hash[time_loc_hash]['fields'][field] = 0     
+        for field in field_array:
+            try:
+                measurements_hash[time_loc_hash]['fields'][field] = int(record[field])
+            except ValueError:
+                measurements_hash[time_loc_hash]['fields'][field] = 0     
 #Drop existing Measurement to ensure data consistency with Datasource being updated regularly
 if INFLUX_DROPMEASUREMENT:
     client.drop_measurement(INFLUX_MEASUREMENT)               
