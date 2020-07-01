@@ -10,8 +10,6 @@ import geohash
 import io
 from datetime import datetime, tzinfo, timedelta
 from influxdb import InfluxDBClient
-from zipfile import ZipFile
-
 class Zone(tzinfo):
     def __init__(self, offset, isdst, name):
         self.offset = offset
@@ -36,63 +34,36 @@ INFLUX_DROPMEASUREMENT = True
 client = InfluxDBClient(INFLUX_HOST, INFLUX_DBPORT,INFLUX_USER,INFUX_PASS, INFLUX_DB)
 GMT = Zone(0, False, 'GMT')
 #Direct Links to file from coronadatascraper
-inputzip  = "https://coronadatascraper.com/timeseries-tidy.csv.zip"
-inputfile = "timeseries-tidy.csv"
+inputfile  = "https://coronadatascraper.com/timeseries.csv"
+tag_array = ["name","level","county","state","country","lat","long","aggregate"]
+field_array = ["population","cases","deaths","recovered","active","tested","hospitalized","hospitalized_current","discharged","icu","icu_current","growthFactor"]
 measurements = []
 measurements_hash = {}
 measurecount = 0
-response = requests.get(inputzip)
+response = requests.get(inputfile)
 if response.status_code != 200:
     print('Failed to get data:', response.status_code)
 else:
-    file = ZipFile(io.BytesIO(response.content))
-    csvfile = file.open(inputfile).read().decode()
-    wrapper = csv.DictReader(csvfile.strip().split('\n'))
+    wrapper = csv.DictReader(response.text.strip().split('\n'))
     results = []
     for record in wrapper:
-        field = record['type']
         today = datetime.today().replace(hour=12, minute=0, second=0, microsecond=0).replace(tzinfo=GMT).timestamp()
-        country = record['country'].strip()
-        #try:
-            #Some Invalid Codes?
-            #countryname = pycountry.countries.get(alpha_3=country).name
-        #except:
-            #countryname = ''
-        city = record['city'].strip()
-        state = record['state'].strip()
-        county = record['county'].strip()
-        level = record['level'].strip()
-        location = record['name'].strip()
-        aggregate = record['aggregate'].strip()
-        #location_hash = "{} {} {}".format(country, state, county)
         datemdy = datetime.strptime(record['date'], '%Y-%m-%d').replace(hour=12, minute=0, second=0, microsecond=0).replace(tzinfo=GMT).timestamp()
-        time_loc_hash = "{}:{}".format(datemdy, location)       
+        time_loc_hash = "{}:{}".format(datemdy, record['name'].strip())       
         if time_loc_hash not in measurements_hash: 
             measurements_hash[time_loc_hash] = {'measurement': INFLUX_MEASUREMENT, 'tags': {}, 'fields': {}, 'time': int(datemdy) * 1000 * 1000 * 1000}
-            measurements_hash[time_loc_hash]['tags']['location'] = location
-            measurements_hash[time_loc_hash]['tags']['country'] = country
-            measurements_hash[time_loc_hash]['tags']['state'] = state
-            measurements_hash[time_loc_hash]['tags']['county'] = county
-            measurements_hash[time_loc_hash]['tags']['aggregate'] = aggregate
-            measurements_hash[time_loc_hash]['tags']['level'] = level
-            measurements_hash[time_loc_hash]['tags']['city'] = city
-            #measurements_hash[time_loc_hash]['tags']['countryname'] =countryname
+            for tag in tag_array:
+                if record[tag].strip() != "":
+                    measurements_hash[time_loc_hash]['tags'][tag] = record[tag].strip()       
             try:
-                #Hard code for USA Geocache due to data feed issue
-                #if country == 'United States' and county == '' and state == '':
-                #    measurements_hash[time_loc_hash]['tags']['geohash'] = '9wy'
-                #else:
                 measurements_hash[time_loc_hash]['tags']['geohash'] = geohash.encode(float(record['lat']),float(record['long'])) # Generate Geohash for use with Grafana Plugin
             except:
                 measurements_hash[time_loc_hash]['tags']['geohash'] = geohash.encode(float(0),float(0)) # Generates a dummy Geohash to satisfy Grafana
-            try:
-                measurements_hash[time_loc_hash]['fields']['population'] = int(record['population'])
-            except ValueError:
-                measurements_hash[time_loc_hash]['fields']['population'] = 0    
-        try:
-            measurements_hash[time_loc_hash]['fields'][field] = int(record['value']) 
-        except ValueError:
-            measurements_hash[time_loc_hash]['fields'][field] = 0    
+            for field in field_array:
+                try:
+                    measurements_hash[time_loc_hash]['fields'][field] = int(record[field])
+                except ValueError:
+                    measurements_hash[time_loc_hash]['fields'][field] = 0     
 #Drop existing Measurement to ensure data consistency with Datasource being updated regularly
 if INFLUX_DROPMEASUREMENT:
     client.drop_measurement(INFLUX_MEASUREMENT)               
