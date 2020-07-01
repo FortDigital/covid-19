@@ -1,8 +1,8 @@
 {
   "__inputs": [
     {
-      "name": "DS_INFLUXDB_- COVID19",
-      "label": "InfluxDB - covid19",
+      "name": "DS_INFLUXDB_COVID19_NEWDATASET",
+      "label": "InfluxDB covid19_NewDataset",
       "description": "",
       "type": "datasource",
       "pluginId": "influxdb",
@@ -58,6 +58,7 @@
   "annotations": {
     "list": [
       {
+        "$$hashKey": "object:61",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": true,
@@ -68,17 +69,16 @@
       }
     ]
   },
-  "description": "Visualisation of Data from John Hopkins University of the Covid-19 Outbreak",
   "editable": true,
-  "gnetId": 11949,
+  "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1585561460624,
+  "iteration": 1585558305016,
   "links": [],
   "panels": [
     {
-      "content": "<a href=\"http://www.fort-digital.com\" target=\"_blank\"><img src=\"https://www.fort-digital.com/wp-content/uploads/2020/03/FD-FINAL-Dark-BG.png\" height=\"100%\"></a> Check out our github for more information and to raise issues: <a href=\"https://github.com/FortDigital/covid-19\">https://github.com/FortDigital/covid-19</a> NB: Mortality Rate is inflated due to Limited Testing.",
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "content": "<a href=\"http://www.fort-digital.com\" target=\"_blank\"><img src=\"https://www.fort-digital.com/wp-content/uploads/2020/03/FD-FINAL-Dark-BG.png\" height=\"100%\"></a>Corona Data Scraper Project: <a href=\"https://coronadatascraper.com/\" target=\"_blank\">https://github.com/CSSEGISandData/COVID-19</a>\nNB: Data Feeds are constantly changing so expect inconsistencies around Active/Recovered cases whilst this is resolved",
+      "datasource": "${DS_INFLUXDB_- TELEGRAF}",
       "gridPos": {
         "h": 2,
         "w": 21,
@@ -94,7 +94,7 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "gridPos": {
         "h": 2,
         "w": 3,
@@ -158,7 +158,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "Select last(confirmed) as time, time as timestamp from covid19",
+          "query": "Select last(cases) as time, time as timestamp from covid19",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "table",
@@ -187,6 +187,7 @@
     },
     {
       "aliasColors": {
+        "Active": "orange",
         "Confirmed": "blue",
         "Deaths": "dark-red",
         "Recovered": "dark-green",
@@ -197,7 +198,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -230,7 +231,8 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
-          "alias": "Confirmed",
+          "$$hashKey": "object:515",
+          "alias": "Cases",
           "bars": false,
           "fill": 0,
           "lines": true,
@@ -260,13 +262,15 @@
           "measurement": "covid19",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT sum(\"cases\") AS \"Cases\", sum(\"deaths\") AS \"Deaths\", sum(\"active\") AS \"Active\", sum(\"recovered\") AS \"Recovered\" FROM \"covid19\" WHERE (\"state\" !~ /./ AND \"county\" !~ /./ AND \"countryname\" =~ /^$Country$/) AND $timeFilter GROUP BY time($__interval) fill(none)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
             [
               {
                 "params": [
-                  "confirmed"
+                  "cases"
                 ],
                 "type": "field"
               },
@@ -276,7 +280,7 @@
               },
               {
                 "params": [
-                  "Confirmed"
+                  "Cases"
                 ],
                 "type": "alias"
               }
@@ -302,6 +306,24 @@
             [
               {
                 "params": [
+                  "active"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              },
+              {
+                "params": [
+                  "Active"
+                ],
+                "type": "alias"
+              }
+            ],
+            [
+              {
+                "params": [
                   "recovered"
                 ],
                 "type": "field"
@@ -320,7 +342,19 @@
           ],
           "tags": [
             {
-              "key": "country",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "countryname",
               "operator": "=~",
               "value": "/^$Country$/"
             }
@@ -347,6 +381,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:534",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -355,6 +390,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:535",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -369,7 +405,7 @@
       }
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "description": "These are running total's rather than calculating active cases etc.",
       "gridPos": {
         "h": 4,
@@ -430,13 +466,15 @@
           "measurement": "covid19",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT sum(\"cases\") AS \"Total Cases\" FROM \"covid19\" WHERE (\"country\" =~ /^$Country$/ AND \"state\" !~ /./ AND \"county\" !~ /./) AND $timeFilter GROUP BY time($__interval) fill(none)",
+          "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
             [
               {
                 "params": [
-                  "confirmed"
+                  "cases"
                 ],
                 "type": "field"
               },
@@ -446,7 +484,7 @@
               },
               {
                 "params": [
-                  "Confirmed"
+                  "Total Cases"
                 ],
                 "type": "alias"
               }
@@ -454,9 +492,21 @@
           ],
           "tags": [
             {
-              "key": "country",
+              "key": "countryname",
               "operator": "=~",
               "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
             }
           ]
         }
@@ -467,8 +517,8 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
-      "description": "Doesnt filter as Population of world hard coded\n\nFuture Improvement to Store Country Populations",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+      "description": "",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -524,7 +574,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT sum(\"confirmed\")/sum(\"population\") as \"Population Infected\" FROM \"covid19\".\"autogen\".\"covid19\" WHERE $timeFilter and \"country\" =~ /^$Country$/ GROUP BY time($__interval) fill(none)",
+          "query": "SELECT sum(\"cases\")/sum(\"population\") as \"Population Infected\" FROM \"covid19\" WHERE $timeFilter and \"state\" !~ /./ and (\"countryname\" =~ /^$Country$/) GROUP BY time($__interval) fill(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -551,7 +601,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "description": "These are running total's rather than calculating active cases etc.",
       "gridPos": {
         "h": 4,
@@ -635,9 +685,21 @@
           ],
           "tags": [
             {
-              "key": "country",
+              "key": "countryname",
               "operator": "=~",
               "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
             }
           ]
         }
@@ -648,8 +710,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
-      "description": "Mortality rate is based on REPORTED cases only and therefore is considerably higher than reality",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -705,7 +766,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT sum(\"deaths\")/(sum(\"recovered\")+sum(\"deaths\")) as \"Resolved Cases resulting in Deaths\" FROM \"covid19\".\"autogen\".\"covid19\" WHERE $timeFilter and \"country\"=~ /$Country/ GROUP BY time($__interval) fill(none)",
+          "query": "SELECT sum(\"deaths\")/(sum(\"cases\")-sum(\"active\")) as \"Mortality Rate\" FROM \"covid19\" WHERE $timeFilter and  (\"countryname\" =~ /^$Country$/ AND \"state\" !~ /./ AND \"county\" !~ /./) GROUP BY time($__interval) fill(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -732,7 +793,7 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "description": "These are running total's rather than calculating active cases etc.",
       "gridPos": {
         "h": 4,
@@ -740,7 +801,7 @@
         "x": 16,
         "y": 7
       },
-      "id": 81,
+      "id": 71,
       "interval": "1d",
       "maxPerRow": 3,
       "options": {
@@ -792,13 +853,15 @@
           "measurement": "covid19",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT  sum(\"cases\") -  (sum(\"active\") +sum(\"deaths\")) AS \"Recovered\" FROM \"covid19\" WHERE (\"countryname\" =~ /^$Country$/ AND \"state\" !~ /./ AND \"county\" !~ /./) AND $timeFilter GROUP BY time($__interval) fill(none)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
             [
               {
                 "params": [
-                  "recovered"
+                  "active"
                 ],
                 "type": "field"
               },
@@ -808,7 +871,7 @@
               },
               {
                 "params": [
-                  "Recovered"
+                  "Active"
                 ],
                 "type": "alias"
               }
@@ -829,15 +892,14 @@
       "type": "stat"
     },
     {
-      "datasource": "${DS_INFLUXDB_- COVID19}",
-      "description": "Mortality rate is based on REPORTED cases only and therefore is considerably higher than reality",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "gridPos": {
         "h": 4,
         "w": 4,
         "x": 20,
         "y": 7
       },
-      "id": 82,
+      "id": 25,
       "interval": "1d",
       "options": {
         "colorMode": "background",
@@ -886,7 +948,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT 1-sum(\"deaths\")/(sum(\"deaths\")+sum(\"recovered\")) as \"Resolved Cases resulting in Recovery\" FROM \"covid19\".\"autogen\".\"covid19\" WHERE $timeFilter and \"country\"=~ /$Country/ GROUP BY time($__interval) fill(none)",
+          "query": "SELECT 1-(sum(\"deaths\")/(sum(\"cases\")-sum(\"active\"))) as \"Recovery Rate\" FROM \"covid19\" WHERE $timeFilter and  (\"countryname\" =~ /^$Country$/ AND \"state\" !~ /./ AND \"county\" !~ /./) GROUP BY time($__interval) fill(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -920,11 +982,11 @@
         "#FF9830",
         "#FA6400"
       ],
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "decimals": 0,
       "esGeoPoint": "geohash",
-      "esLocationName": "location",
-      "esMetric": "Confirmed",
+      "esLocationName": "countryname",
+      "esMetric": "Active Cases",
       "gridPos": {
         "h": 7,
         "w": 8,
@@ -971,7 +1033,7 @@
             },
             {
               "params": [
-                "location"
+                "countryname"
               ],
               "type": "tag"
             },
@@ -991,7 +1053,7 @@
             [
               {
                 "params": [
-                  "confirmed"
+                  "cases"
                 ],
                 "type": "field"
               },
@@ -1001,7 +1063,7 @@
               },
               {
                 "params": [
-                  "Confirmed"
+                  "Active Cases"
                 ],
                 "type": "alias"
               }
@@ -1009,9 +1071,21 @@
           ],
           "tags": [
             {
-              "key": "country",
+              "key": "countryname",
               "operator": "=~",
               "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
             }
           ]
         }
@@ -1034,10 +1108,10 @@
         "#F2495C",
         "#C4162A"
       ],
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "decimals": 0,
       "esGeoPoint": "geohash",
-      "esLocationName": "location",
+      "esLocationName": "countryname",
       "esMetric": "Deaths",
       "gridPos": {
         "h": 7,
@@ -1084,7 +1158,7 @@
             },
             {
               "params": [
-                "location"
+                "countryname"
               ],
               "type": "tag"
             },
@@ -1122,9 +1196,21 @@
           ],
           "tags": [
             {
-              "key": "country",
+              "key": "countryname",
               "operator": "=~",
               "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
             }
           ]
         }
@@ -1147,10 +1233,10 @@
         "#73BF69",
         "#37872D"
       ],
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "decimals": 0,
       "esGeoPoint": "geohash",
-      "esLocationName": "location",
+      "esLocationName": "countryname",
       "esMetric": "Recovered",
       "gridPos": {
         "h": 7,
@@ -1160,7 +1246,7 @@
       },
       "hideEmpty": true,
       "hideZero": true,
-      "id": 80,
+      "id": 76,
       "initialZoom": "1",
       "interval": "1d",
       "locationData": "geohash",
@@ -1211,6 +1297,8 @@
           "measurement": "covid19",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT sum(\"cases\") -  (sum(\"active\") +sum(\"deaths\")) AS \"Recovered\" FROM \"covid19\" WHERE (\"countryname\" =~ /^$Country$/ AND \"county\" !~ /./ AND \"state\" !~ /./) AND $timeFilter GROUP BY time(1d), \"geohash\", \"countryname\" fill(none)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "table",
           "select": [
@@ -1238,6 +1326,18 @@
               "key": "country",
               "operator": "=~",
               "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
             }
           ]
         }
@@ -1257,7 +1357,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1267,7 +1367,7 @@
         "y": 18
       },
       "hiddenSeries": false,
-      "id": 2,
+      "id": 86,
       "interval": "1d",
       "legend": {
         "alignAsTable": true,
@@ -1293,7 +1393,6 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "repeat": "Fields",
       "repeatDirection": "h",
       "seriesOverrides": [],
       "spaceLength": 10,
@@ -1301,146 +1400,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_country",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "country"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "none"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "covid19",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "$Fields"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "sum"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "country",
-              "operator": "=~",
-              "value": "/^$Country$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Total $Fields",
-      "tooltip": {
-        "shared": true,
-        "sort": 2,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 5,
-        "w": 8,
-        "x": 0,
-        "y": 23
-      },
-      "hiddenSeries": false,
-      "id": 88,
-      "interval": "1d",
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": true,
-        "max": false,
-        "min": false,
-        "rightSide": true,
-        "show": true,
-        "sort": "current",
-        "sortDesc": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "maxPerRow": 3,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": "Fields",
-      "repeatDirection": "h",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$tag_country",
+          "alias": "$tag_countryname",
           "groupBy": [
             {
               "params": [
@@ -1464,7 +1424,455 @@
           "measurement": "covid19",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT sum(\"$Fields\")/sum(\"population\")*100000 as \"Population Infected\" FROM \"covid19\" WHERE $timeFilter and \"country\" =~ /^$Country$/ GROUP BY time($__interval), \"country\" fill(none)",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "cases"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "countryname",
+              "operator": "=~",
+              "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Total Cases",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:339",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:340",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 8,
+        "y": 18
+      },
+      "hiddenSeries": false,
+      "id": 84,
+      "interval": "1d",
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxPerRow": 3,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_countryname",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "countryname"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "covid19",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT sum(\"deaths\") FROM \"covid19\" WHERE (\"country\" =~ /^$Country$/ AND \"county\" !~ /./ AND \"state\" !~ /./) AND $timeFilter GROUP BY time($__interval), \"country\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "deaths"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "countryname",
+              "operator": "=~",
+              "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Total Deaths",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:339",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:340",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 16,
+        "y": 18
+      },
+      "hiddenSeries": false,
+      "id": 85,
+      "interval": "1d",
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxPerRow": 3,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_countryname",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "country"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "covid19",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT  sum(\"cases\") -  (sum(\"active\") +sum(\"deaths\")) AS \"Recovered\" FROM \"covid19\" WHERE (\"countryname\" =~ /^$Country$/ AND \"state\" !~ /./ AND \"county\" !~ /./) AND $timeFilter GROUP BY time($__interval), \"countryname\" fill(none)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "deaths"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "country",
+              "operator": "=~",
+              "value": "/^$Country$/"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Total Recovered",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:339",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:340",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 23
+      },
+      "hiddenSeries": false,
+      "id": 91,
+      "interval": "1d",
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxPerRow": 3,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_countryname",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "countryname"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "covid19",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT sum(\"cases\")/sum(\"population\")*100000 as \"Population Infected\" FROM \"covid19\" WHERE $timeFilter and (\"countryname\" =~ /^$Country$/ AND \"county\" !~ /./ AND \"state\" !~ /./) GROUP BY time($__interval), \"countryname\" fill(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1507,7 +1915,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Total $Fields per 100,000",
+      "title": "Total Cases per 100,000",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1523,6 +1931,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:339",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1531,6 +1940,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:340",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1549,17 +1959,17 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 5,
         "w": 8,
-        "x": 0,
-        "y": 28
+        "x": 8,
+        "y": 23
       },
       "hiddenSeries": false,
-      "id": 63,
+      "id": 92,
       "interval": "1d",
       "legend": {
         "alignAsTable": true,
@@ -1585,7 +1995,6 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "repeat": "Fields",
       "repeatDirection": "h",
       "seriesOverrides": [],
       "spaceLength": 10,
@@ -1593,7 +2002,162 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_country",
+          "alias": "$tag_countryname",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "countryname"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "covid19",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT (sum(\"deaths\")/sum(\"population\"))*100000 as \"Population Infected\" FROM \"covid19\" WHERE $timeFilter and (\"countryname\" =~ /^$Country$/ AND \"county\" !~ /./ AND \"state\" !~ /./) GROUP BY time($__interval), \"countryname\" fill(none)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "cases"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "countryname",
+              "operator": "=~",
+              "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Total Deaths per 100,000",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:339",
+          "decimals": null,
+          "format": "none",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:340",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 16,
+        "y": 23
+      },
+      "hiddenSeries": false,
+      "id": 88,
+      "interval": "1d",
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxPerRow": 3,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_countryname",
           "groupBy": [
             {
               "params": [
@@ -1617,13 +2181,158 @@
           "measurement": "covid19",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT  non_negative_difference(sum(\"cases\")) -  (non_negative_difference(sum(\"active\")) + non_negative_difference(sum(\"deaths\"))) AS \"Recovered\" FROM \"covid19\" WHERE (\"countryname\" =~ /^$Country$/ AND \"state\" !~ /./ AND \"county\" !~ /./) AND $timeFilter GROUP BY time($__interval), \"countryname\" fill(none)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
             [
               {
                 "params": [
-                  "$Fields"
+                  "deaths"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "country",
+              "operator": "=~",
+              "value": "/^$Country$/"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "New Recovered",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:339",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:340",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 28
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "interval": "1d",
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxPerRow": 3,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "repeat": null,
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_countryname",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "country"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "covid19",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT non_negative_difference(sum(\"cases\")) FROM \"covid19\" WHERE (\"countryname\" =~ /^$Country$/ AND \"county\" !~ /./ AND \"state\" !~ /./) AND $timeFilter GROUP BY time($__interval), \"countryname\" fill(none)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "cases"
                 ],
                 "type": "field"
               },
@@ -1642,6 +2351,18 @@
               "key": "country",
               "operator": "=~",
               "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
             }
           ]
         }
@@ -1650,7 +2371,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "New $Fields",
+      "title": "New Cases",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1666,6 +2387,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:339",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1674,6 +2396,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:340",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1692,17 +2415,17 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_INFLUXDB_- COVID19}",
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 5,
         "w": 8,
-        "x": 0,
-        "y": 33
+        "x": 8,
+        "y": 28
       },
       "hiddenSeries": false,
-      "id": 96,
+      "id": 87,
       "interval": "1d",
       "legend": {
         "alignAsTable": true,
@@ -1728,7 +2451,6 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "repeat": "Fields",
       "repeatDirection": "h",
       "seriesOverrides": [],
       "spaceLength": 10,
@@ -1736,7 +2458,165 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$tag_country",
+          "alias": "$tag_countryname",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "countryname"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "covid19",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT non_negative_difference(sum(\"deaths\")) FROM \"covid19\" WHERE (\"country\" =~ /^$Country$/ AND \"county\" !~ /./ AND \"state\" !~ /./) AND $timeFilter GROUP BY time($__interval), \"country\" fill(none)",
+          "rawQuery": false,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "deaths"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              },
+              {
+                "params": [],
+                "type": "non_negative_difference"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "countryname",
+              "operator": "=~",
+              "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "New Deaths",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:339",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:340",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 33
+      },
+      "hiddenSeries": false,
+      "id": 89,
+      "interval": "1d",
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxPerRow": 3,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_countryname",
           "groupBy": [
             {
               "params": [
@@ -1760,7 +2640,7 @@
           "measurement": "covid19",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT non_negative_difference(sum(\"$Fields\"))/sum(\"population\")*100000 as \"Population Infected\" FROM \"covid19\" WHERE $timeFilter and (\"country\" =~ /^$Country$/) GROUP BY time($__interval), \"country\" fill(none)",
+          "query": "SELECT non_negative_difference(sum(\"cases\"))/sum(\"population\")*100000 as \"Population Infected\" FROM \"covid19\" WHERE $timeFilter and (\"countryname\" =~ /^$Country$/ AND \"county\" !~ /./ AND \"state\" !~ /./) GROUP BY time($__interval), \"countryname\" fill(none)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -1809,7 +2689,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "New $Fields per 100,000",
+      "title": "New Cases per 100,000",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -1825,6 +2705,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:339",
           "format": "none",
           "label": null,
           "logBase": 1,
@@ -1833,6 +2714,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:340",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1847,24 +2729,165 @@
       }
     },
     {
-      "content": "",
-      "datasource": "${DS_INFLUXDB_- TELEGRAF}",
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+      "fill": 1,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 38
+        "h": 5,
+        "w": 8,
+        "x": 8,
+        "y": 33
       },
-      "id": 106,
-      "mode": "markdown",
+      "hiddenSeries": false,
+      "id": 90,
+      "interval": "1d",
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "maxPerRow": 3,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_countryname",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "country"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "none"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "covid19",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT non_negative_difference(sum(\"deaths\"))/sum(\"population\")*100000 as \"Population Infected\" FROM \"covid19\" WHERE $timeFilter and (\"countryname\" =~ /^$Country$/ AND \"county\" !~ /./ AND \"state\" !~ /./) GROUP BY time($__interval), \"countryname\" fill(none)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "deaths"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              },
+              {
+                "params": [],
+                "type": "non_negative_difference"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "country",
+              "operator": "=~",
+              "value": "/^$Country$/"
+            },
+            {
+              "condition": "AND",
+              "key": "county",
+              "operator": "!~",
+              "value": "/./"
+            },
+            {
+              "condition": "AND",
+              "key": "state",
+              "operator": "!~",
+              "value": "/./"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
       "timeFrom": null,
+      "timeRegions": [],
       "timeShift": null,
-      "title": "",
-      "transparent": true,
-      "type": "text"
+      "title": "New Deaths per 100,000",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:339",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:340",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
-  "refresh": "1h",
+  "refresh": false,
   "schemaVersion": 22,
   "style": "dark",
   "tags": [],
@@ -1872,47 +2895,32 @@
     "list": [
       {
         "allValue": null,
-        "current": {
-          "selected": true,
-          "text": "All",
-          "value": "$__all"
-        },
+        "current": {},
+        "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+        "definition": "SHOW FIELD KEYS",
         "hide": 2,
         "includeAll": true,
+        "index": -1,
         "label": null,
         "multi": false,
         "name": "Fields",
-        "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "selected": false,
-            "text": "confirmed",
-            "value": "confirmed"
-          },
-          {
-            "selected": false,
-            "text": "deaths",
-            "value": "deaths"
-          },
-          {
-            "selected": false,
-            "text": "recovered",
-            "value": "recovered"
-          }
-        ],
-        "query": "confirmed,deaths,recovered",
+        "options": [],
+        "query": "SHOW FIELD KEYS",
+        "refresh": 1,
+        "regex": "",
         "skipUrlSync": false,
-        "type": "custom"
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       },
       {
         "allValue": null,
         "current": {},
-        "datasource": "${DS_INFLUXDB_- COVID19}",
-        "definition": "SHOW TAG VALUES with KEY=country",
+        "datasource": "${DS_INFLUXDB_COVID19_NEWDATASET}",
+        "definition": "SHOW TAG VALUES with KEY=countryname",
         "hide": 0,
         "includeAll": true,
         "index": -1,
@@ -1920,7 +2928,7 @@
         "multi": true,
         "name": "Country",
         "options": [],
-        "query": "SHOW TAG VALUES with KEY=country",
+        "query": "SHOW TAG VALUES with KEY=countryname",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1952,10 +2960,10 @@
     ]
   },
   "timezone": "",
-  "title": "Covid-19",
-  "uid": "H7a-pFmRz",
+  "title": "Covid-19 NewDataset",
+  "uid": "q0IvUH9Zk",
   "variables": {
     "list": []
   },
-  "version": 125
+  "version": 32
 }
