@@ -23,14 +23,14 @@ class Zone(tzinfo):
     def tzname(self, dt):
         return self.name
 def add_tags(measurements_hash, response, key):
-    row = response.query('key == "' + key + '"' )   
+    row = response.query('key == "' + str(key) + '"' )   
     if len(row.index) > 0:  
         for col, content in row.iteritems():
             if str(content.values[0]) != 'nan':
                 measurements_hash['tags'][col] = content.values[0]      
     return measurements_hash
 def add_fields(measurements_hash, response, key,date):
-    row = response.query('key == "' + key + '" and date == "' + date + '"')   
+    row = response.query('key == "' + str(key) + '" and date == "' + date + '"')   
     if len(row.index) > 0:  
         for col, content in row.iteritems():
             if col != "key" and col != "date":
