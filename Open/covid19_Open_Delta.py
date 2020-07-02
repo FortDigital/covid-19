@@ -89,7 +89,7 @@ for label,record in response.iterrows():
     time_loc_hash = "{}:{}".format(datemdy, record['key'])       
     measurements_hash[time_loc_hash] = {'measurement': INFLUX_MEASUREMENT, 'tags': {}, 'fields': {}, 'time': int(datemdy) * 1000 * 1000 * 1000}
     for tag in tag_array:
-        if record[tag].strip() != "":
+        if record[tag] != "":
             measurements_hash[time_loc_hash]['tags'][tag] = record[tag]
     measurements_hash[time_loc_hash] = add_tags(measurements_hash[time_loc_hash],indexresponse,record['key'])
     measurements_hash[time_loc_hash] = add_tags(measurements_hash[time_loc_hash],geographyresponse,record['key'])
