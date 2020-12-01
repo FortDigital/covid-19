@@ -65,7 +65,10 @@ for i in sorted(inputfiles.keys()):
                     measurements_hash[time_loc_hash]['tags']['location'] = location_hash
                     measurements_hash[time_loc_hash]['tags']['country'] = country
                     measurements_hash[time_loc_hash]['tags']['province'] = province
-                    measurements_hash[time_loc_hash]['tags']['geohash'] = geohash.encode(float(record['Lat']),float(record['Long'])) # Generate Geohash for use with Grafana Plugin 
+                    try:
+                        measurements_hash[time_loc_hash]['tags']['geohash'] = geohash.encode(float(record['Lat']),float(record['Long'])) # Generate Geohash for use with Grafana Plugin 
+                    except:
+                        measurements_hash[time_loc_hash]['tags']['geohash'] = geohash.encode(0.0,0.0) # If Lat and Long are blank then just set to 0,0                    
                     #Population for Countries only
                     if province != "":
                         #Get Population of province if i can work out how
